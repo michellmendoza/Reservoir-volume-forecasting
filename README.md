@@ -123,10 +123,27 @@ README.md
 
 ## Cómo cargar los checkpoints existentes (sin reentrenar)
 
-En `02_PAPER_ANALYSIS.ipynb`, la función `cargar_completo(nombre_config)` lee
-el `.pkl` correspondiente e inyecta los modelos `.keras` ya entrenados.
-**No** requiere volver a llamar a `entrenar_modelo()` ni
-`entrenar_multisemilla()`.
+Los checkpoints (`.pkl`) y modelos entrenados (`.keras`) no están versionados
+en este repositorio por su tamaño (~640 MB en total). Están disponibles como
+adjuntos en la release
+[**v1.0.0-checkpoints**](https://github.com/michellmendoza/Reservoir-volume-forecasting/releases/tag/v1.0.0-checkpoints):
+
+- `v15_mse.pkl`
+- `v15_huber015.pkl`
+- `v15_huber015_lr.pkl`
+- `keras_models.zip` (todos los `.keras`, uno por config/embalse/arquitectura/semilla)
+
+**Para usarlos:**
+
+1. Descarga los 4 archivos desde la release.
+2. Coloca los 3 `.pkl` en `Figuras/checkpoints/`.
+3. Descomprime `keras_models.zip` dentro de `Figuras/checkpoints/models/`
+   (debe quedar un archivo `.keras` por combinación de
+   `<config><embalse><arquitectura>_seed<N>`).
+4. En `02_PAPER_ANALYSIS.ipynb`, la función `cargar_completo(nombre_config)`
+   lee el `.pkl` correspondiente e inyecta los modelos `.keras` ya
+   entrenados. **No** requiere volver a llamar a `entrenar_modelo()` ni
+   `entrenar_multisemilla()`.
 
 ## Cómo generar figuras y tablas (reproducir resultados del paper)
 
