@@ -1,0 +1,24 @@
+# Versiones verificadas en un entorno Colab limpio,
+# confirmando que los 3 checkpoints congelados (v15_mse.pkl,
+# v15_huber015.pkl, v15_huber015_lr.pkl) deserializan correctamente bajo
+# estas versiones exactas. Ver "Reproducibility Note" en README.md para el
+# alcance real de esta verificación.
+
+numpy==2.0.2
+pandas==2.2.2
+matplotlib==3.10.0
+tensorflow==2.20.0
+scikit-learn==1.6.1
+scipy==1.16.3
+statsmodels==0.14.6
+openpyxl==3.1.5
+
+# Python: 3.12.13
+
+# NOTA: `google.colab` (usado para montar Google Drive) NO es un paquete pip
+# instalable fuera de Google Colab. Fuera de Colab, reemplazar
+# `from google.colab import drive; drive.mount(...)` por el método local de
+# acceso a los archivos.
+#
+# Módulos de la librería estándar usados (no van en este archivo):
+# os, pickle, random, time, sys.
