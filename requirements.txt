@@ -1,7 +1,7 @@
 # Versiones empleadas durante el entrenamiento de los modelos. Además
 # verificadas en un entorno Colab limpio, confirmando que los 3 
-# checkpoints congelados (v15_mse.pkl, v15_huber015.pkl, 
-# v15_huber015_lr.pkl) deserializan correctamente bajo
+# checkpoints congelados (v16_mse.pkl, v16_huber015.pkl, 
+# v16_huber015_lr.pkl) deserializan correctamente bajo
 # estas versiones exactas. 
 
 Python: 3.12.13
