@@ -66,25 +66,26 @@ sus términos de uso vigentes en https://www.ideam.gov.co/dhime.
 ## Estructura de carpetas
 
 > Nota: `RUTA_BASE` en los notebooks apunta a Google Drive
-> (`/content/drive/MyDrive/Embalses/`). Los dos notebooks
-> (`01_MODEL_TRAINING.ipynb`, `02_PAPER_ANALYSIS.ipynb`) viven fuera de esa
-> carpeta de datos; `RUTA_BASE` es solo donde se leen/escriben datos,
-> checkpoints, figuras y tablas. Las subcarpetas `Datos_base/` y
+> (`/content/drive/MyDrive/Embalses/Pronostico/`), o a la ruta que definas con la
+> variable de entorno `EMBALSES_RUTA_BASE` si ejecutas fuera de Colab. Los
+> dos notebooks (`01_MODEL_TRAINING.ipynb`, `02_PAPER_ANALYSIS.ipynb`) viven
+> fuera de esa carpeta de datos; `RUTA_BASE` es solo donde se leen/escriben
+> datos, checkpoints, figuras y tablas. Las subcarpetas `Datos_base/` y
 > `Figuras/checkpoints/` **no se versionan en este repositorio** (ver
 > `.gitignore`): debes reconstruirlas localmente siguiendo las
 > instrucciones de la sección "Datos" y/o reentrenando con
 > `01_MODEL_TRAINING.ipynb`.
 
-Embalses/ (RUTA_BASE)
+Pronostico/ (RUTA_BASE)
 ├── Datos_base/ (RUTA_DATOS) — no versionado, ver sección "Datos"
 │ ├── PD_Embalses.xlsx # volumen crudo (entrada)
 │ ├── PR_Embalses.xlsx # precipitación cruda (entrada)
 │ └── Datos_Embalses_Merged.xlsx # dataset fusionado, generado por 01_MODEL_TRAINING.ipynb (Fase 1)
 ├── Figuras/
 │ └── checkpoints/ (RUTA_CHECKPOINTS) — no versionado (pesa ~610 MB)
-│ ├── v15_mse.pkl
-│ ├── v15_huber015.pkl
-│ ├── v15_huber015_lr.pkl
+│ ├── v16_mse.pkl
+│ ├── v16_huber015.pkl
+│ ├── v16_huber015_lr.pkl
 │ └── models/ (RUTA_MODELOS) — no versionado
 │ └── <config><embalse><arquitectura>_seed<N>.keras
 ├── Figuras_Paper/ (RUTA_FIGURAS_PAPER)
@@ -101,7 +102,7 @@ Embalses/ (RUTA_BASE)
 │ ├── Tabla_6b_forecast_detalle_A.csv
 │ ├── Tabla_7a_escenarios_resumen_AB.csv
 │ ├── Tabla_7b_escenarios_detalle_AB.csv
-│ └── Tablas_Paper_Completo.xlsx # las 10 tablas en un solo Excel
+│ └── Tablas_Paper_Completo.xlsx # las tablas del paper en un solo Excel
 └── Resultados_Pronosticos/ (RUTA_RESULTADOS_PRONOSTICOS)
 └── forecast_validacion*.csv
 
@@ -113,8 +114,8 @@ README.md
 ## Cómo ejecutar el entrenamiento completo
 
 1. Abrir `01_MODEL_TRAINING.ipynb` en Google Colab con Google Drive montado
-   en `RUTA_BASE = '/content/drive/MyDrive/Embalses/'` (o ajustar esa ruta
-   si se usa otra estructura local).
+   en `RUTA_BASE = '/content/drive/MyDrive/Embalses/'` (o define la variable
+   de entorno `EMBALSES_RUTA_BASE` si usas otra estructura local).
 2. Ejecutar el notebook de principio a fin.
 3. **Advertencia:** el entrenamiento completo (2 arquitecturas × 3
    configuraciones de pérdida × 3 embalses × 10 semillas) puede tardar
@@ -128,9 +129,9 @@ en este repositorio por su tamaño (~640 MB en total). Están disponibles como
 adjuntos en la release
 [**v1.0.0-checkpoints**](https://github.com/michellmendoza/Reservoir-volume-forecasting/releases/tag/v1.0.0-checkpoints):
 
-- `v15_mse.pkl`
-- `v15_huber015.pkl`
-- `v15_huber015_lr.pkl`
+- `v16_mse.pkl`
+- `v16_huber015.pkl`
+- `v16_huber015_lr.pkl`
 - `keras_models.zip` (todos los `.keras`, uno por config/embalse/arquitectura/semilla)
 
 **Para usarlos:**
@@ -169,25 +170,17 @@ adjuntos en la release
   `scikit-learn==1.6.1`, `scipy==1.16.3`, `statsmodels==0.14.6`,
   `openpyxl==3.1.5` (ver `requirements.txt`).
 
-- **Qué se confirmó exactamente:** en una sesión de Colab limpia, con las
-  versiones anteriores instaladas explícitamente, se cargaron sin error los
-  3 checkpoints congelados del proyecto
-  (`Embalses/Figuras/checkpoints/v15_mse.pkl`, `v15_huber015.pkl`,
-  `v15_huber015_lr.pkl`) vía `pickle.load`, y cada uno expuso la estructura
-  esperada (`dict` con claves `Sisga`, `Neusa`, `Tominé`).
-
-- **Qué NO se reverificó todavía bajo este entorno pinneado:** la carga de
-  los modelos `.keras` (`tf.keras.models.load_model`), ni las dos capas de
-  verificación completas de `02_PAPER_ANALYSIS.ipynb` (Capa 1: métricas
-  recalculadas vs. almacenadas; Capa 2: spot-check de `model.predict`).
-  Ejecutar `02_PAPER_ANALYSIS.ipynb` completo bajo este `requirements.txt`
-  es el siguiente paso para cerrar esa verificación.
+- **Qué se confirmó exactamente:** bajo este mismo entorno pinneado, se
+  ejecutó `01_MODEL_TRAINING.ipynb` de punta a punta, generando desde cero los
+  checkpoints `v16_mse.pkl`, `v16_huber015.pkl` y `v16_huber015_lr.pkl` con
+  sus `.keras` asociados. A continuación se ejecutó `02_PAPER_ANALYSIS.ipynb`
+  completo, sin reentrenar: cargó los tres checkpoints (`pickle.load` +
+  `tf.keras.models.load_model`) y pasó las dos capas de verificación interna
+  (Capa 1: métricas recalculadas vs. almacenadas; Capa 2: spot-check de
+  `model.predict`), además de regenerar tablas y figuras sin discrepancias.
 
 - **`01_MODEL_TRAINING.ipynb`** es una copia pública de `Version15.ipynb`
-  (el notebook original de entrenamiento), renombrada para el repositorio.
-  **No se volvió a ejecutar de punta a punta** bajo este entorno pinneado —
-  es decir, todavía no está verificado que reproduzca exactamente los
-  checkpoints existentes partiendo de los datos crudos bajo estas
-  versiones. Los checkpoints que acompañan el repositorio son los
-  originales, generados con el entorno de Colab en el momento del
-  entrenamiento (no reentrenados).
+  (el notebook original de entrenamiento), renombrada y con las rutas
+  externalizadas para el repositorio. Ya fue verificado de punta a punta
+  bajo el entorno de esta nota, produciendo los checkpoints `v16_*` que
+  acompañan el repositorio.
